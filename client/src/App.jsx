@@ -236,7 +236,18 @@ function TodoList() {
                       {item.description && <div style={{ marginTop: 6 }}>{item.description}</div>}
                     </div>
                     <div className="toolbar">
-                      <button className="btn" onClick={() => toggleComplete(item)}>{item.completed ? 'Mark Incomplete' : 'Mark Complete'}</button>
+                      <div className="checkbox-wrapper">
+                        <input 
+                          type="checkbox" 
+                          id={`complete-${item._id}`}
+                          checked={item.completed} 
+                          onChange={() => toggleComplete(item)}
+                          className="todo-checkbox"
+                        />
+                        <label htmlFor={`complete-${item._id}`} className="checkbox-label">
+                          {/* {item.completed ? 'Completed' : 'Mark Complete'} */}
+                        </label>
+                      </div>
                       <button className="btn btn-danger" onClick={() => remove(item._id)}>Delete</button>
                     </div>
                   </div>
