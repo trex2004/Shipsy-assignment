@@ -231,3 +231,29 @@ DELETE /api/todos/:id
 ```
 
 
+
+## 🤖 AI Prompts Used
+
+This section documents the AI prompts utilized in this project and provides explanations for each prompt.
+
+### Prompts
+
+- **Prompt:** "I have to build a basic crud app with basic authentication according to the specifications in the pdf, the stack to be used is mongodb,express node and react. make an basic todo app with a text field, enum(dropdown selection), boolean field, and one calculated field as specified in the pdf, we can do the api documantaion later, it needs to have the crud endpoints, along with a simple and minimal ui using react, the tasks in the todo app needs to be paginated, and have one usefull filter such as completed/not completed we can make the sorting and searching functionality later, will use mongodb atlas as i also need to host it in something like vercel later"
+  - **Explanation:** 1st prompt to set up everything and inform about the task and stack
+
+- **Prompt:** "can you make the frontend look better?"
+  - **Explanation:** styling the frontend, added css to the frontend
+
+- **Prompt:** "change everything to es6"
+  - **Explanation:**  refactoring the code to use modern JavaScript syntax
+
+- **Prompt:** "add the searching and sorting function"
+  - **Explanation:**  adding new features for filtering and ordering tasks
+
+- **Prompt:** "add option to edit a task after its made"
+  - **Explanation:**  implementing the update functionality for existing tasks
+
+
+
+
+
