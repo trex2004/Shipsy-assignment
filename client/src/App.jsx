@@ -105,6 +105,59 @@ function TodoForm({ onCreate }) {
   )
 }
 
+function EditTodoForm({ todo, onSave, onCancel }) {
+  const [title, setTitle] = useState(todo.title)
+  const [priority, setPriority] = useState(todo.priority)
+  const [completed, setCompleted] = useState(todo.completed)
+  const [dueDate, setDueDate] = useState(todo.dueDate ? new Date(todo.dueDate).toISOString().split('T')[0] : '')
+  const [description, setDescription] = useState(todo.description || '')
+
+  async function submit(e) {
+    e.preventDefault()
+    const payload = { title, priority, completed, description }
+    if (dueDate) payload.dueDate = new Date(dueDate).toISOString()
+    await onSave(payload)
+  }
+
+  return (
+    <form onSubmit={submit} className="edit-form">
+      <div className="edit-form-grid">
+        <div>
+          <label>Title</label>
+          <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        </div>
+        <div>
+          <label>Priority</label>
+          <select className="select" value={priority} onChange={(e) => setPriority(e.target.value)}>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div>
+          <label>Completed</label>
+          <div className="chips">
+            <input id={`edit-completed-${todo._id}`} type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} />
+            <label htmlFor={`edit-completed-${todo._id}`} className="muted">Mark complete</label>
+          </div>
+        </div>
+        <div>
+          <label>Due date</label>
+          <input className="input" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+        </div>
+        <div className="edit-buttons">
+          <button className="btn btn-primary" type="submit">Save</button>
+          <button className="btn" type="button" onClick={onCancel}>Cancel</button>
+        </div>
+      </div>
+      <div>
+        <label>Description</label>
+        <textarea className="textarea" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
+      </div>
+    </form>
+  )
+}
+
 function TodoList() {
   const [items, setItems] = useState([])
   const [page, setPage] = useState(1)
@@ -115,6 +168,7 @@ function TodoList() {
   const [sortBy, setSortBy] = useState('createdAt')
   const [sortOrder, setSortOrder] = useState('desc')
   const [loading, setLoading] = useState(false)
+  const [editingId, setEditingId] = useState(null)
 
   const completedParam = useMemo(() => {
     if (completedFilter === 'all') return undefined
@@ -162,6 +216,20 @@ function TodoList() {
     } else {
       refresh(page)
     }
+  }
+
+  async function onEdit(id, payload) {
+    await updateTodo(id, payload)
+    setEditingId(null)
+    refresh(page)
+  }
+
+  function startEdit(id) {
+    setEditingId(id)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
   }
 
   return (
@@ -221,39 +289,48 @@ function TodoList() {
           ) : items.length === 0 ? (
             <div className="muted">No todos</div>
           ) : (
-            <ul className="list">
-              {items.map(item => (
-                <li key={item._id} className="item">
-                  <div className="item-row">
-                    <div>
-                      <div className="item-title">{item.title}</div>
-                      <div className="item-meta">
-                        <span className={`badge ${item.priority}`}>{item.priority}</span>
-                        <span className="chip">{item.completed ? 'Completed' : 'Pending'}</span>
-                        <span className={`badge ${item.isOverdue ? 'badge-warn' : 'badge-ok'}`}>{item.isOverdue ? 'Overdue' : 'On time'}</span>
-                        {item.dueDate && <span className="chip">Due {new Date(item.dueDate).toLocaleDateString()}</span>}
-                      </div>
-                      {item.description && <div style={{ marginTop: 6 }}>{item.description}</div>}
-                    </div>
-                    <div className="toolbar">
-                      <div className="checkbox-wrapper">
-                        <input 
-                          type="checkbox" 
-                          id={`complete-${item._id}`}
-                          checked={item.completed} 
-                          onChange={() => toggleComplete(item)}
-                          className="todo-checkbox"
-                        />
-                        <label htmlFor={`complete-${item._id}`} className="checkbox-label">
-                          {/* {item.completed ? 'Completed' : 'Mark Complete'} */}
-                        </label>
-                      </div>
-                      <button className="btn btn-danger" onClick={() => remove(item._id)}>Delete</button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                         <ul className="list">
+               {items.map(item => (
+                 <li key={item._id} className="item">
+                   {editingId === item._id ? (
+                     <EditTodoForm 
+                       todo={item} 
+                       onSave={(payload) => onEdit(item._id, payload)} 
+                       onCancel={cancelEdit}
+                     />
+                   ) : (
+                     <div className="item-row">
+                       <div>
+                         <div className="item-title">{item.title}</div>
+                         <div className="item-meta">
+                           <span className={`badge ${item.priority}`}>{item.priority}</span>
+                           <span className="chip">{item.completed ? 'Completed' : 'Pending'}</span>
+                           <span className={`badge ${item.isOverdue ? 'badge-warn' : 'badge-ok'}`}>{item.isOverdue ? 'Overdue' : 'On time'}</span>
+                           {item.dueDate && <span className="chip">Due {new Date(item.dueDate).toLocaleDateString()}</span>}
+                         </div>
+                         {item.description && <div style={{ marginTop: 6 }}>{item.description}</div>}
+                       </div>
+                       <div className="toolbar">
+                         <div className="checkbox-wrapper">
+                           <input 
+                             type="checkbox" 
+                             id={`complete-${item._id}`}
+                             checked={item.completed} 
+                             onChange={() => toggleComplete(item)}
+                             className="todo-checkbox"
+                           />
+                           <label htmlFor={`complete-${item._id}`} className="checkbox-label">
+                             {/* {item.completed ? 'Completed' : 'Mark Complete'} */}
+                           </label>
+                         </div>
+                         <button className="btn" onClick={() => startEdit(item._id)}>Edit</button>
+                         <button className="btn btn-danger" onClick={() => remove(item._id)}>Delete</button>
+                       </div>
+                     </div>
+                   )}
+                 </li>
+               ))}
+             </ul>
           )}
         </div>
       </div>
