@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
-import todoRoutes from './routes/todos.js';
+import todoRoutes from './routes/todo.js';
 
 dotenv.config({ path: './.env' });
 
