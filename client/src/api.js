@@ -18,9 +18,12 @@ export async function login(email, password) {
   return data
 }
 
-export async function listTodos({ page = 1, limit = 10, completed } = {}) {
+export async function listTodos({ page = 1, limit = 10, completed, search, sortBy, sortOrder } = {}) {
   const params = { page, limit }
   if (completed !== undefined) params.completed = String(completed)
+  if (search) params.search = search
+  if (sortBy) params.sortBy = sortBy
+  if (sortOrder) params.sortOrder = sortOrder
   const { data } = await axios.get(`${API_BASE}/todos`, { params })
   return data
 }

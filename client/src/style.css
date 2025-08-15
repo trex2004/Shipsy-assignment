@@ -83,7 +83,7 @@ label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px
 .textarea { min-height: 70px; resize: vertical; }
 .input:focus, .select:focus, .textarea:focus { border-color: #2b3a55; box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
 
-.toolbar { display: flex; gap: 10px; align-items: center; }
+.toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .spacer { flex: 1; }
 
 .btn {
@@ -131,7 +131,13 @@ label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px
 
 .pagination { display: flex; gap: 10px; justify-content: center; align-items: center; margin-top: 12px; }
 
-@media (max-width: 900px) { .grid-form { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 600px) { .grid-form { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { 
+  .grid-form { grid-template-columns: 1fr 1fr; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+}
+@media (max-width: 600px) { 
+  .grid-form { grid-template-columns: 1fr; }
+  .toolbar { flex-direction: column; align-items: stretch; }
+}
 
 

@@ -111,6 +111,9 @@ function TodoList() {
   const [limit] = useState(5)
   const [totalPages, setTotalPages] = useState(1)
   const [completedFilter, setCompletedFilter] = useState('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [sortBy, setSortBy] = useState('createdAt')
+  const [sortOrder, setSortOrder] = useState('desc')
   const [loading, setLoading] = useState(false)
 
   const completedParam = useMemo(() => {
@@ -121,7 +124,14 @@ function TodoList() {
   async function refresh(p = page) {
     setLoading(true)
     try {
-      const data = await listTodos({ page: p, limit, completed: completedParam })
+      const data = await listTodos({ 
+        page: p, 
+        limit, 
+        completed: completedParam,
+        search: searchTerm || undefined,
+        sortBy,
+        sortOrder
+      })
       setItems(data.items)
       setTotalPages(data.totalPages)
       setPage(data.page)
@@ -132,7 +142,7 @@ function TodoList() {
 
   useEffect(() => {
     refresh(1)
-  }, [completedParam])
+  }, [completedParam, searchTerm, sortBy, sortOrder])
 
   async function onCreate(payload) {
     await createTodo(payload)
@@ -161,12 +171,42 @@ function TodoList() {
           <div className="toolbar">
             <h2 className="title" style={{ margin: 0 }}>Todos</h2>
             <div className="spacer" />
-            <label>Filter</label>
-            <select className="select" value={completedFilter} onChange={(e) => setCompletedFilter(e.target.value)}>
-              <option value="all">All</option>
-              <option value="completed">Completed</option>
-              <option value="not_completed">Not Completed</option>
-            </select>
+            <div className="toolbar">
+              <label>Search</label>
+              <input 
+                className="input" 
+                type="text" 
+                placeholder="Search todos..." 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ width: 200 }}
+              />
+            </div>
+            <div className="toolbar">
+              <label>Sort by</label>
+              <select className="select" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="createdAt">Created</option>
+                <option value="title">Title</option>
+                <option value="priority">Priority</option>
+                <option value="dueDate">Due Date</option>
+                <option value="completed">Status</option>
+              </select>
+            </div>
+            <div className="toolbar">
+              <label>Order</label>
+              <select className="select" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
+                <option value="desc">Desc</option>
+                <option value="asc">Asc</option>
+              </select>
+            </div>
+            <div className="toolbar">
+              <label>Filter</label>
+              <select className="select" value={completedFilter} onChange={(e) => setCompletedFilter(e.target.value)}>
+                <option value="all">All</option>
+                <option value="completed">Completed</option>
+                <option value="not_completed">Not Completed</option>
+              </select>
+            </div>
           </div>
           <div style={{ marginTop: 12 }}>
             <TodoForm onCreate={onCreate} />
