@@ -224,7 +224,7 @@ label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px
 .item:first-child { border-top-left-radius: 14px; border-top-right-radius: 14px; }
 .item:last-child { border-bottom-left-radius: 14px; border-bottom-right-radius: 14px; }
 
-.item-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.item-row { display: flex; align-items:start; justify-content: space-between; gap: 14px; }
 .item-title { font-weight: 700; letter-spacing: .2px; }
 .item-meta { font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
